@@ -1,3 +1,4 @@
+-- Active: 1734966686789@@127.0.0.1@3306@sql_practices
 DROP DATABASE IF EXISTS devblog_db;
 CREATE DATABASE devblog_db;
 

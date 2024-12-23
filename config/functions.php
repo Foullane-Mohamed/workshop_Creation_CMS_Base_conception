@@ -1,6 +1,7 @@
 <?php
-
-function create_slug($string) {
+require '../config/database.php';
+function create_slug($string)
+{
     // Replace non letter or digits by -
     $string = preg_replace('~[^\pL\d]+~u', '-', $string);
 
@@ -29,11 +30,13 @@ function create_slug($string) {
     return $string;
 }
 
-function sanitize_string($string) {
+function sanitize_string($string)
+{
     return htmlspecialchars(strip_tags(trim($string)));
 }
 
-function validate_image($file) {
+function validate_image($file)
+{
     // Check if file was uploaded without errors
     if ($file['error'] !== UPLOAD_ERR_OK) {
         return "Error uploading file. Code: " . $file['error'];
@@ -53,40 +56,51 @@ function validate_image($file) {
     return true;
 }
 
-function generate_random_string($length = 10) {
-    return substr(str_shuffle(str_repeat($x='0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ', 
-        ceil($length/strlen($x)))), 1, $length);
+function generate_random_string($length = 10)
+{
+    return substr(str_shuffle(str_repeat(
+        $x = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+        ceil($length / strlen($x))
+    )), 1, $length);
 }
 
-function generate_csrf_token() {
+function generate_csrf_token()
+{
     if (!isset($_SESSION['csrf_token'])) {
         $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     }
     return $_SESSION['csrf_token'];
 }
 
-function verify_csrf_token() {
-    if (!isset($_SESSION['csrf_token']) || !isset($_POST['csrf_token']) ||
-        $_SESSION['csrf_token'] !== $_POST['csrf_token']) {
+function verify_csrf_token()
+{
+    if (
+        !isset($_SESSION['csrf_token']) || !isset($_POST['csrf_token']) ||
+        $_SESSION['csrf_token'] !== $_POST['csrf_token']
+    ) {
         http_response_code(403);
         die('Invalid CSRF token');
     }
 }
 
-function redirect($path) {
+function redirect($path)
+{
     header("Location: $path");
     exit();
 }
 
-function display_error($message) {
+function display_error($message)
+{
     return "<div class='alert alert-danger'>$message</div>";
 }
 
-function display_success($message) {
+function display_success($message)
+{
     return "<div class='alert alert-success'>$message</div>";
 }
 
-function time_elapsed_string($datetime, $full = false) {
+function time_elapsed_string($datetime, $full = false)
+{
     $now = new DateTime;
     $ago = new DateTime($datetime);
     $diff = $now->diff($ago);
@@ -131,4 +145,38 @@ function time_elapsed_string($datetime, $full = false) {
     }
 
     return $string ? implode(', ', $string) . ' ago' : 'just now';
+}
+
+
+function get_all_articles($mysqli)
+{
+    $sql = "SELECT * FROM articles";
+    $result = mysqli_query($mysqli, $sql);
+    $articles = mysqli_fetch_assoc($result);
+
+    return $articles;
+}
+function get_category_stats($mysqli)
+{
+    $sql = "SELECT * FROM categories";
+    $result = mysqli_query($mysqli, $sql);
+    $categories = mysqli_fetch_assoc($result);
+
+    return $categories;
+}
+function get_top_users($mysqli)
+{
+    $sql = "SELECT * FROM users";
+    $result = mysqli_query($mysqli, $sql);
+    $users = mysqli_fetch_assoc($result);
+
+    return $users;
+}
+function get_top_articles($mysqli)
+{
+    $sql = "SELECT * FROM articles ORDER BY views LIMIT 5 ";
+    $result = mysqli_query($mysqli, $sql);
+    $top_articles = mysqli_fetch_assoc($result);
+
+    return $top_articles;
 }
