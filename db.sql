@@ -24,6 +24,6 @@ CREATE TABLE articles (
     views INT DEFAULT 0,
     user_id INT NOT NULL,
     category_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories (id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
 );
