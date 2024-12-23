@@ -12,7 +12,7 @@ CREATE TABLE categories (
     categories VARCHAR(20),
     PRIMARY KEY (categories_id),
     article_id int(11),
-    FOREIGN KEY (article_id) REFERENCES articles (article_id),
+    FOREIGN KEY (article_id) REFERENCES articles (article_id) ON DELETE CASCADE ON UPDATE CASCADE
 )
 
 CREATE TABLE `tags` (
@@ -48,6 +48,6 @@ CREATE TABLE articles (
     views INT DEFAULT 0,
     user_id INT NOT NULL,
     category_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE  ON UPDATE CASCADE,
+    FOREIGN KEY (category_id) REFERENCES categories(category_id) ON DELETE CASCADE  ON UPDATE CASCADE
 );
