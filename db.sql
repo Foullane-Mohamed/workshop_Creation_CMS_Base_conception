@@ -1,3 +1,4 @@
+-- Active: 1734944096124@@127.0.0.1@3306
 -- db
 
 DROP DATABASE IF EXISTS CMS;
@@ -13,7 +14,7 @@ CREATE TABLE categories (
     PRIMARY KEY (categories_id),
     article_id int(11),
     FOREIGN KEY (article_id) REFERENCES articles (article_id),
-)
+);
 
 CREATE TABLE `tags` (
   `ID` INT(11) AUTO_INCREMENT PRIMARY KEY,
@@ -38,7 +39,7 @@ CREATE Table users(
     bio varchar(255),
     password varchar (50),
     email varchar(255)
-)
+);
 
 CREATE TABLE articles (
     article_id INT AUTO_INCREMENT PRIMARY KEY,
