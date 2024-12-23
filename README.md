@@ -79,7 +79,7 @@ Ce workshop vise à créer un système de gestion de contenu (CMS) complet compr
 
 ## Membres de l'équipe
 - Mohamed
-- Rida
+- Reida Mohammed
 - Foullane mohamed
 -  Hamza
 

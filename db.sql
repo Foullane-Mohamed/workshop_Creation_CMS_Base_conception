@@ -6,7 +6,6 @@ CREATE DATABASE CMS;
 
 USE CMS;
 
-CREATE TABLE categories ( categories_id int();
 
 CREATE TABLE categories (
     categories_id int(11) NOT NULL AUTO_INCREMENT,
@@ -14,6 +13,17 @@ CREATE TABLE categories (
     PRIMARY KEY (categories_id),
     article_id int(11),
     FOREIGN KEY (article_id) REFERENCES articles (article_id),
+)
+
+
+
+CREATE Table users(
+    user_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    user_name varchar(50),
+    profile varchar(50),
+    bio varchar(255),
+    password varchar (50),
+    email varchar(255)
 )
 
 CREATE TABLE articles (
