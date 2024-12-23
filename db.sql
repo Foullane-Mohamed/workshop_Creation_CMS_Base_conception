@@ -1,51 +1,65 @@
--- db
+DROP DATABASE IF EXISTS devblog_db;
+CREATE DATABASE devblog_db;
 
-DROP DATABASE IF EXISTS CMS;
+-- Connect to the database
+USE devblog_db;
 
-CREATE DATABASE CMS;
 
-USE CMS;
+-- Create users table first
+CREATE TABLE users (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(20) NOT NULL UNIQUE,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password_hash VARCHAR(255) NOT NULL,
+    bio TEXT,
+    profile_picture_url VARCHAR(255)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE Table users (
-    user_id INT PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    user_name varchar(50),
-    profile varchar(50),
-    bio varchar(255),
-    password varchar(50),
-    email varchar(255)
-)
-
+-- Create categories table
 CREATE TABLE categories (
-    categories_id int(11) NOT NULL AUTO_INCREMENT,
-    categories VARCHAR(20),
-    PRIMARY KEY (categories_id),
-    article_id int(11),
-)
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name TEXT NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE `tags` (
-    `tag_id` INT(11) AUTO_INCREMENT PRIMARY KEY,
-    `name` VARCHAR(255) NOT NULL UNIQUE,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-);
-
-CREATE TABLE `article_tags` (
-    `article_id` INT(11) NOT NULL,
-    `tag_id` INT(11) NOT NULL,
-    PRIMARY KEY (`article_id`, `tag_id`),
-    FOREIGN KEY (`article_id`) REFERENCES `articles` (`article_id `) ON DELETE CASCADE,
-    FOREIGN KEY (`tag_id`) REFERENCES `tags` (`tag_id`) ON DELETE CASCADE
-);
-
+-- Create articles table with proper foreign keys
 CREATE TABLE articles (
-    article_id INT AUTO_INCREMENT PRIMARY KEY,
+    id BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     title VARCHAR(255) NOT NULL,
+    slug VARCHAR(255) NOT NULL,
     content TEXT NOT NULL,
-    status ENUM('brouillon', 'publie') DEFAULT 'draft',
-    views INT DEFAULT 0,
+    excerpt TEXT,
+    meta_description VARCHAR(160),
+    category_id BIGINT NOT NULL,
+    featured_image VARCHAR(255),
+    status ENUM('draft', 'published', 'scheduled') NOT NULL DEFAULT 'draft',
+    scheduled_date DATETIME NULL,
+    author_id BIGINT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    user_id INT NOT NULL,
-    category_id INT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users (user_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    FOREIGN KEY (category_id) REFERENCES categories (category_id) ON DELETE CASCADE ON UPDATE CASCADE
-);
+    views INTEGER DEFAULT 0,
+    UNIQUE KEY idx_articles_slug (slug),
+    KEY idx_articles_category (category_id),
+    KEY idx_articles_author (author_id),
+    KEY idx_articles_status_date (status, scheduled_date),
+    CONSTRAINT fk_articles_category FOREIGN KEY (category_id) 
+        REFERENCES categories (id),
+    CONSTRAINT fk_articles_author FOREIGN KEY (author_id) 
+        REFERENCES users (id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE tags (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(255) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Create article_tags table
+CREATE TABLE article_tags (
+    article_id BIGINT UNSIGNED,
+    tag_id BIGINT,
+    PRIMARY KEY (article_id, tag_id),
+    CONSTRAINT fk_article_tags_article FOREIGN KEY (article_id) 
+        REFERENCES articles (id) ON DELETE CASCADE,
+    CONSTRAINT fk_article_tags_tag FOREIGN KEY (tag_id) 
+        REFERENCES tags (id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
